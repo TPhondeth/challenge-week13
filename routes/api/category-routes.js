@@ -1,22 +1,23 @@
 const router = require('express').Router();
-const { Category, Product } = require('../../models');
+const {
+    Category,
+    Product
+} = require('../../models');
 
 // The `/api/categories` endpoint
 
 router.get('/', (req, res) => {
     // Find all categories
     Category.findAll({
-            attributes: [
-                'id',
-                'category_name'
-            ],
+            attributes: ['id', 'category_name'],
             include: [{
                 model: Product,
                 attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
             }]
-        }).then(dbCategoryData => res.json(dbCategoryData))
+        })
+        .then(dbCategoryData => res.json(dbCategoryData))
         .catch(err => {
-            console.log(err)
+            console.log(err);
             res.status(500).json(err);
         });
 });
@@ -27,15 +28,13 @@ router.get('/:id', (req, res) => {
             where: {
                 id: req.params.id
             },
-            attributes: [
-                'id',
-                'category_name'
-            ],
+            attributes: ['id', 'category_name'],
             include: [{
                 model: Product,
                 attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
             }]
-        }).then(dbCategoryData => {
+        })
+        .then(dbCategoryData => {
             if (!dbCategoryData) {
                 res.status(404).json({
                     message: 'No category found with this id'
@@ -53,9 +52,9 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     // Create a new category
     Category.create({
-            category_name: res.body.category_name
+            category_name: req.body.category_name
         })
-        .then(dbCategoryData => json(dbCategoryData))
+        .then(dbCategoryData => res.json(dbCategoryData))
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
@@ -72,7 +71,7 @@ router.put('/:id', (req, res) => {
         .then(dbCategoryData => {
             if (!dbCategoryData[0]) {
                 res.status(404).json({
-                    message: 'No category found with this id'
+                    message: 'No Category found with this id'
                 });
                 return;
             }
